@@ -78,38 +78,28 @@ for( const key in  keysList){
     const el = keysList[key]
     el.addEventListener("click", function(e){
         const letter = el.dataset.letter;
-        // switch(letter){
-        //     case 'enter': {
-        //         wordEl.innerText = userInput;
-        //         checkWord();
-        //         userInput =''; 
-        //     };
-        //     case 'delete': 
-        // }
-
+ 
+        console.log(`word-${attempt}-${wordPosition}`, userInput)
         if(letter === "enter"){
             checkWord();
-           
         }
-        else if(letter === "delete" && wordPosition > 0){
+        else if(letter === "delete" && wordPosition >= 0 && userInput.length >= 0){
+            const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
+            userInput = userInput.substring(0, userInput.length-1);
+            wordPosition = wordPosition <= 0 ? 0 : wordPosition -1;
+            box.textContent = ' ';  
+            //deletes the word from the userInput
             
-            const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
-       
-                box.textContent = ' ';
-                wordPosition--;
-                console.log();
-                  //deletes the word from the userInput
-                userInput = userInput.substring(0, userInput.length - 1 );
-                wordEl.innerText = userInput;
         } 
-        else if(userInput.length < 5){
-            userInput+= letter;
-            const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
-            box.textContent = letter;
-            wordPosition++
+        else if(userInput.length <=5  && letter != "delete"){
+            if(userInput.length +1 != 6){
+                userInput+= letter;
+                const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
+                box.textContent = letter;
+                console.log(wordPosition)
+                wordPosition = wordPosition >= 3 ? 4 : wordPosition +1
+            }
         }
-    
-
     })
 }
 
@@ -151,8 +141,8 @@ console.log("duuuslooooos")
 
 function startLine(){
     userInput =""; 
-    attempt ++;
-    wordPosition = 0
+    attempt++;
+    wordPosition = 0;
 }
 function gameOver(){
     const popUp = document.createElement('div');
