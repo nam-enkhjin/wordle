@@ -27,7 +27,8 @@ const index = Math.floor(Math.random() * 16) + 1;
 
 let correctWord = words[index]
 
-let myAudio = document.querySelector('#audio');
+let myAudio = new Audio("game-music-loop-7-145285.mp3");
+myAudio.loop = true;
 myAudio.play();
 
 const arr = [];
