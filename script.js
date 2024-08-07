@@ -4,28 +4,40 @@ const board = document.getElementById('board');
 board.style.display = 'flex';
 board.style.flexDirection = 'column';
 board.style.alignItems = 'center';
-const words = [
-    'there',
-    'their',
-    'about',
-    'would',
-    'these',
-    'other',
-    'words',
-    'could',
-    'write',
-    'first',
-    'water',
-    'after',
-    'where',
-    'right',
-    'think',
-    'three',
-    'years'
-];
-const index = Math.floor(Math.random() * 16) + 1;
 
-let correctWord = words[index]
+let words = [];
+fetch("sgb-words.txt")
+    .then((res)=> res.text())
+    .then((data)=> {
+        words = data.split(/\r?\n/)
+        const index = Math.floor(Math.random() * words.length) + 1;
+        let correctWord = words[index];
+        console.log(correctWord);
+        setUp();
+    });
+// const words = [
+//     'there',
+//     'their',
+//     'about',
+//     'would',
+//     'these',
+//     'other',
+//     'words',
+//     'could',
+//     'write',
+//     'first',
+//     'water',
+//     'after',
+//     'where',
+//     'right',
+//     'think',
+//     'three',
+//     'years'
+// ];
+
+
+
+console.log(correctWord, words[index], '----', words);
 
 let myAudio = new Audio("game-music-loop-7-145285.mp3");
 myAudio.loop = true;
@@ -55,15 +67,46 @@ function setUp(){
             row.appendChild(square);
         }
     }
+    begin();
 }
 
-setUp();
+function begin(){
+    let userInput ='';
+    let attempt = 0;
+    let wordPosition = 0
+    const keysList = document.getElementsByClassName("ke");
 
+    for( const key in  keysList){
+        const el = keysList[key]
+        el.addEventListener("click", function(e){
+            const letter = el.dataset.letter;
+    
+            console.log(`word-${attempt}-${wordPosition}`, userInput)
+            if(letter === "enter"){
+                checkWord();
+            }
+            else if(letter === "delete" && wordPosition >= 0 && userInput.length >= 0){
+                const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
+                userInput = userInput.substring(0, userInput.length-1);
+                wordPosition = wordPosition <= 0 ? 0 : wordPosition -1;
+                box.textContent = ' ';  
+                //deletes the word from the userInput
+                
+            } 
+            else if(userInput.length <=5  && letter != "delete"){
+                if(userInput.length +1 != 6){
+                    userInput+= letter;
+                    const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
+                    box.textContent = letter;
+                    console.log(wordPosition)
+                    wordPosition = wordPosition >= 3 ? 4 : wordPosition +1
+                }
+            }
+        })
+    }
 
+}
 
-let userInput ='';
-let attempt = 0;
-let wordPosition = 0
 // document.addEventListener(    "keydown",
 //     (event) => {
 //         const letter = event.key;
@@ -73,36 +116,6 @@ let wordPosition = 0
 //     })
 
 
-const keysList = document.getElementsByClassName("ke");
-
-for( const key in  keysList){
-    const el = keysList[key]
-    el.addEventListener("click", function(e){
-        const letter = el.dataset.letter;
- 
-        console.log(`word-${attempt}-${wordPosition}`, userInput)
-        if(letter === "enter"){
-            checkWord();
-        }
-        else if(letter === "delete" && wordPosition >= 0 && userInput.length >= 0){
-            const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
-            userInput = userInput.substring(0, userInput.length-1);
-            wordPosition = wordPosition <= 0 ? 0 : wordPosition -1;
-            box.textContent = ' ';  
-            //deletes the word from the userInput
-            
-        } 
-        else if(userInput.length <=5  && letter != "delete"){
-            if(userInput.length +1 != 6){
-                userInput+= letter;
-                const box = document.getElementsByClassName(`word-${attempt}-${wordPosition}`)[0]
-                box.textContent = letter;
-                console.log(wordPosition)
-                wordPosition = wordPosition >= 3 ? 4 : wordPosition +1
-            }
-        }
-    })
-}
 
 function checkWord(){
     if( userInput.length < 5){
@@ -135,8 +148,6 @@ function checkWord(){
     }}
 
     startLine()
-
-console.log("duuuslooooos")
      //NEEDS ANIMATION
 }
 
